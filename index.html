@@ -462,16 +462,8 @@
           method="POST"
           data-netlify="true"
           data-netlify-honeypot="bot-field"
-          action="/?submitted=true"
+          class="mt-8 grid gap-6"
         >
-          <form name="contact" data-netlify="true" netlify hidden>
-            <input type="hidden" name="form-name" value="contact" />
-            <input type="text" name="name" />
-            <input type="email" name="email" />
-            <input type="text" name="business" />
-            <textarea name="message"></textarea>
-          </form>
-
           <input type="hidden" name="form-name" value="contact" />
           <!-- Honeypot field -->
           <label class="hidden"
@@ -622,12 +614,11 @@
         e.preventDefault();
         const formData = new FormData(form);
         try {
-          await fetch(form.getAttribute("action") || "/", {
+          await fetch("/", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: encode(Object.fromEntries(formData)),
           });
-
           form.reset();
           modal.classList.remove("hidden");
           // move focus to close button for accessibility
