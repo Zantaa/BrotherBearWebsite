@@ -623,7 +623,6 @@
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
-
         try {
           const res = await fetch(form.getAttribute("action") || "/", {
             method: "POST",
@@ -632,11 +631,11 @@
             redirect: "follow",
           });
 
-          // ✅ Netlify success can be 200–303, or an opaque redirect (status 0).
+          // Treat Netlify success as 200–303, or cross-origin opaque redirect
           if (
             (res.status >= 200 && res.status < 400) ||
-            res.type === "opaqueredirect" || // redirect across origins
-            res.status === 0 // opaque response
+            res.type === "opaqueredirect" ||
+            res.status === 0
           ) {
             form.reset();
             modal.classList.remove("hidden");
@@ -644,11 +643,13 @@
             return;
           }
 
-          // If we get here, something unexpected happened
+          // Debug unexpected responses
+          const text = await res.text().catch(() => "");
           console.error(
             "Unexpected Netlify response:",
             res.status,
-            await res.text()
+            res.type,
+            text
           );
           alert(
             "Submission went through, but the response looked odd. Please check Netlify."
