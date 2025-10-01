@@ -462,7 +462,7 @@
           method="POST"
           data-netlify="true"
           data-netlify-honeypot="bot-field"
-          action="https://brotherbearweb.netlify.app/?submitted=true"
+          action="https://www.brotherbearwebdev.com/?submitted=true"
           class="mt-8 grid gap-6"
         >
           <input type="hidden" name="form-name" value="contact" />
@@ -629,27 +629,34 @@
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams(formData).toString(),
+            redirect: "follow",
           });
 
-          // ✅ Accept 200–303 as "success" since Netlify may redirect
-          if (res.status >= 200 && res.status < 400) {
+          // ✅ Netlify success can be 200–303, or an opaque redirect (status 0).
+          if (
+            (res.status >= 200 && res.status < 400) ||
+            res.type === "opaqueredirect" || // redirect across origins
+            res.status === 0 // opaque response
+          ) {
             form.reset();
             modal.classList.remove("hidden");
             closeBtn.focus();
-          } else {
-            console.error(
-              "Unexpected Netlify response:",
-              res.status,
-              await res.text()
-            );
-            alert(
-              "Submission went through, but something looked odd. Please check Netlify."
-            );
+            return;
           }
+
+          // If we get here, something unexpected happened
+          console.error(
+            "Unexpected Netlify response:",
+            res.status,
+            await res.text()
+          );
+          alert(
+            "Submission went through, but the response looked odd. Please check Netlify."
+          );
         } catch (err) {
           console.error(err);
           alert(
-            "Something went wrong. Please try again or email brotherbearwebdev@gmail.com"
+            "Network error. Please try again or email brotherbearwebdev@gmail.com"
           );
         }
       });
