@@ -462,7 +462,7 @@
           method="POST"
           data-netlify="true"
           data-netlify-honeypot="bot-field"
-          action="/?submitted=true"
+          action="https://brotherbearweb.netlify.app/?submitted=true"
           class="mt-8 grid gap-6"
         >
           <input type="hidden" name="form-name" value="contact" />
@@ -609,72 +609,6 @@
 
       // Year in footer
       document.getElementById("year").textContent = new Date().getFullYear();
-
-      // Netlify AJAX submit to show thank-you modal without redirect
-      const form = document.getElementById("contactForm");
-      const modal = document.getElementById("thankyouModal");
-      const closeBtn = document.getElementById("ty-close");
-      const viewWork = document.getElementById("ty-view-work");
-
-      function encode(data) {
-        return new URLSearchParams(data).toString();
-      }
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        try {
-          const res = await fetch(form.getAttribute("action") || "/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams(formData).toString(),
-            redirect: "follow",
-          });
-
-          // Treat Netlify success as 200–303, or cross-origin opaque redirect
-          if (
-            (res.status >= 200 && res.status < 400) ||
-            res.type === "opaqueredirect" ||
-            res.status === 0
-          ) {
-            form.reset();
-            modal.classList.remove("hidden");
-            closeBtn.focus();
-            return;
-          }
-
-          // Debug unexpected responses
-          const text = await res.text().catch(() => "");
-          console.error(
-            "Unexpected Netlify response:",
-            res.status,
-            res.type,
-            text
-          );
-          alert(
-            "Submission went through, but the response looked odd. Please check Netlify."
-          );
-        } catch (err) {
-          console.error(err);
-          alert(
-            "Network error. Please try again or email brotherbearwebdev@gmail.com"
-          );
-        }
-      });
-
-      // Close modal handlers
-      function hideModal() {
-        modal.classList.add("hidden");
-      }
-      closeBtn.addEventListener("click", hideModal);
-      viewWork.addEventListener("click", hideModal);
-      modal.addEventListener("click", (ev) => {
-        if (ev.target === modal) hideModal();
-      });
-      window.addEventListener("keydown", (ev) => {
-        if (ev.key === "Escape" && !modal.classList.contains("hidden"))
-          hideModal();
-      });
     </script>
   </body>
 </html>
