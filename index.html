@@ -629,6 +629,11 @@
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams(new FormData(form)).toString(),
           });
+          if (!res.ok) {
+            console.error("Post failed:", res.status, await res.text());
+            alert("Submission failed. Please try again.");
+            return;
+          }
 
           form.reset();
           modal.classList.remove("hidden");
