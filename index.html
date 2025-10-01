@@ -629,17 +629,23 @@
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams(new FormData(form)).toString(),
           });
-          //if (!res.ok) {
-          // console.error("Post failed:", res.status, await res.text());
-          // alert("Submission failed. Please try again.");
-          //return;
-          //}
-
-          form.reset();
-          modal.classList.remove("hidden");
-          // move focus to close button for accessibility
-          closeBtn.focus();
+          // ✅ Accept 200–303 as "success" since Netlify may redirect
+          if (res.status >= 200 && res.status < 400) {
+            form.reset();
+            modal.classList.remove("hidden");
+            closeBtn.focus();
+          } else {
+            console.error(
+              "Unexpected Netlify response:",
+              res.status,
+              await res.text()
+            );
+            alert(
+              "Submission went through, but something looked odd. Please check Netlify."
+            );
+          }
         } catch (err) {
+          console.error(err);
           alert(
             "Something went wrong. Please try again or email brotherbearwebdev@gmail.com"
           );
